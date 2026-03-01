@@ -1,0 +1,22 @@
+# Your secret keys — NEVER commit this
+.env
+
+# Data files — FAISS index and SQLite DB can be large and are machine-generated
+data/
+
+# Python cache files — auto-generated, not source code
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Virtual environment — each dev creates their own
+.venv/
+
+
+# Rough / scratch files
+rough.txt
+Q&A.txt
+ui_rough.txt
+
+# OS noise
+.DS_Store
