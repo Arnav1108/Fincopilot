@@ -96,19 +96,6 @@ def load_file(file_path: str, metadata: dict) -> list[Document]:
 
     return documents
 
-    # -------------------------------
-    # Add metadata
-    # -------------------------------
-    for doc in documents:
-        doc.metadata["filename"] = os.path.basename(file_path)
-        doc.metadata["company"] = metadata.get("company", "Unknown")
-        doc.metadata["doc_type"] = metadata.get("doc_type", "General")
-        doc.metadata["year"] = metadata.get("year", "Unknown")
-
-    print(f"Loaded: {os.path.basename(file_path)} ({len(documents)} pages)")
-
-    return documents
-
 
 def load_multiple_files(file_paths: list[str], metadata: dict) -> list[Document]:
 

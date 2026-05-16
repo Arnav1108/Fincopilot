@@ -17,7 +17,7 @@ def search_documents(query: str, index_name: str = None) -> str:
     """
 
     try:
-        results = search(query, index_name=index_name, k=12)
+        results = search(query, index_name=index_name, k=20)
 
         if not results:
             return "No relevant documents found."

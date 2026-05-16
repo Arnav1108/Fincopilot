@@ -99,15 +99,34 @@ def keyword_boost(results, query):
     return [r for _, r in boosted]
 
 
+FINANCIAL_TERM_EXPANSIONS = {
+    "revenue": "total revenue net revenue net sales consolidated statements of operations",
+    "net income": "net income earnings net profit loss attributable",
+    "cash flow": "cash flows from operating activities free cash flow",
+    "total assets": "total assets balance sheet consolidated",
+    "earnings per share": "earnings per share diluted eps basic",
+}
+
+def _expand_query(query: str) -> str:
+    q = query.lower()
+    for term, expansion in FINANCIAL_TERM_EXPANSIONS.items():
+        if term in q:
+            return f"{query} {expansion}"
+    return query
+
+
 def search(query: str, index_name: str = None, k: int = 5) -> list[dict]:
     if not query or not query.strip():
         return []
 
-    if index_name:
-        return search_one(query, index_name, k=k)
+    expanded = _expand_query(query)
 
-    # DO NOT merge everything blindly
-    return search_all(query, k=k)
+    if index_name:
+        results = search_one(expanded, index_name, k=k)
+    else:
+        results = search_all(expanded, k=k)
+
+    return keyword_boost(results, query)
     
 def list_indexes() -> list[str]:
 

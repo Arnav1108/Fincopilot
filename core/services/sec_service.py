@@ -14,7 +14,8 @@ DATA_DIR = "data/sec_filings"
 # ---------------------------------------------------------
 def _resolve_ticker(company: str) -> str:
     url = "https://www.sec.gov/files/company_tickers.json"
-    headers = {"User-Agent": "FinCopilot (youremail@example.com)"}
+    contact_email = os.environ.get("SEC_CONTACT_EMAIL", "fincopilot@example.com")
+    headers = {"User-Agent": f"FinCopilot ({contact_email})"}
 
     response = requests.get(url, headers=headers, timeout=10)
     data = response.json()
@@ -85,7 +86,8 @@ def fetch_10k(company: str, year: str) -> dict:
         ticker_upper = ticker.upper()
 
         # Download filings
-        dl = Downloader("FinCopilot", "youremail@example.com", DATA_DIR)
+        contact_email = os.environ.get("SEC_CONTACT_EMAIL", "fincopilot@example.com")
+        dl = Downloader("FinCopilot", contact_email, DATA_DIR)
         dl.get("10-K", ticker_upper)
 
         filings_root = os.path.join(

@@ -313,7 +313,11 @@ def DeterministicExecutionNode(state: AgentState) -> dict:
             ]
         }
 
-    return {}
+    return {
+        "messages": [
+            AIMessage(content="⚠️ Could not handle this request deterministically.")
+        ]
+    }
 
 
 def PlannerNode(state: AgentState) -> dict:
@@ -440,7 +444,7 @@ def CustomToolNode(state : AgentState) -> dict:
     last_message = state["messages"][-1]
 
     if not hasattr(last_message,"tool_calls") or not last_message.tool_calls:
-        return {}
+        return {"messages": []}
 
     tool_call = last_message.tool_calls[0]
     tool_name = tool_call["name"]
@@ -505,7 +509,11 @@ def IngestSecNode(state: AgentState) -> dict:
     if not path or not meta:
         return {
             "messages": [
-                AIMessage(content="⚠️ No pending document to ingest.")
+                AIMessage(content=(
+                    "⚠️ There is no pending SEC filing to ingest.\n\n"
+                    "To fetch a filing, ask me something like:\n"
+                    "\"Fetch Apple 2023 10-K\" or \"Get Microsoft 2022 annual report\""
+                ))
             ]
         }
 
@@ -615,6 +623,8 @@ def build_graph():
     }
     )
     graph.add_edge("deterministic", END)
+    graph.add_edge("confirm_sec", END)
+    graph.add_edge("ingest_sec", END)
 
     # Planner execution flow
     graph.add_edge("planner", "executor")
@@ -670,9 +680,6 @@ def chat(user_input: str, session_id: str, graph) -> str:
                 # Keep only last few messages
                 current_messages = current_messages[-5:]
 
-        inputs = {
-            "messages": current_messages
-        }
         inputs = {
             "messages": current_messages
         }
